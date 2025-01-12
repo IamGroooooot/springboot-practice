@@ -22,26 +22,23 @@ public class BootTomcat {
         applicationContext.refresh();
         
         ServletWebServerFactory servletWebServerFactory = new TomcatServletWebServerFactory();
-        WebServer webServer = servletWebServerFactory.getWebServer(servletContext -> {
-            servletContext.addServlet("hello", new HttpServlet() {
-                @Override
-                protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-                    if (req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())) {
-                        HelloController helloController = applicationContext.getBean(HelloController.class);
-                        String ret = helloController.hello(req.getParameter("name"));
-                        
-                        resp.setContentType(MediaType.TEXT_PLAIN_VALUE);
-                        resp.getWriter().println(ret);
-                    } else if (req.getRequestURI().equals("/hello")) {
-                        resp.setStatus(HttpStatus.NOT_IMPLEMENTED.value());
-                    } else {
-                        resp.setStatus(HttpStatus.NOT_FOUND.value());
-                    }
+        WebServer webServer = servletWebServerFactory.getWebServer(servletContext -> servletContext.addServlet("hello", new HttpServlet() {
+            @Override
+            protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+                if (req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())) {
+                    HelloController helloController = applicationContext.getBean(HelloController.class);
+                    String ret = helloController.hello(req.getParameter("name"));
                     
+                    resp.setContentType(MediaType.TEXT_PLAIN_VALUE);
+                    resp.getWriter().println(ret);
+                } else if (req.getRequestURI().equals("/hello")) {
+                    resp.setStatus(HttpStatus.NOT_IMPLEMENTED.value());
+                } else {
+                    resp.setStatus(HttpStatus.NOT_FOUND.value());
                 }
-            }).addMapping("/*");
-            
-        });
+                
+            }
+        }).addMapping("/*"));
         webServer.start();
     }
     
