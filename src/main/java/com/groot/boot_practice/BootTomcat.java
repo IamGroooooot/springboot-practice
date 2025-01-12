@@ -19,10 +19,12 @@ public class BootTomcat {
         // Spring Container = Application Context 생성
         GenericApplicationContext applicationContext = new GenericApplicationContext();
         applicationContext.registerBean(HelloController.class);
+        applicationContext.registerBean(SimpleHelloService.class);
         applicationContext.refresh();
         
         ServletWebServerFactory servletWebServerFactory = new TomcatServletWebServerFactory();
-        WebServer webServer = servletWebServerFactory.getWebServer(servletContext -> servletContext.addServlet("hello", new HttpServlet() {
+        WebServer webServer = servletWebServerFactory.getWebServer(servletContext -> servletContext.addServlet("hello"
+                , new HttpServlet() {
             @Override
             protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException {
                 if (req.getRequestURI().equals("/hello") && req.getMethod().equals(HttpMethod.GET.name())) {
